@@ -4,8 +4,4 @@ public class Launcher {
 
     }
 
-    public void patata(){
-        System.out.println("hola");
-    }
-
 }
