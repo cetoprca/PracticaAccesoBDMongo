@@ -7,9 +7,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Projections;
 import org.bson.Document;
-import org.bson.json.JsonObject;
-import org.bson.json.JsonReader;
-import org.bson.json.JsonWriter;
 
 import java.io.IOException;
 import java.nio.file.Files;

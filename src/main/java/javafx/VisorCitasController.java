@@ -203,30 +203,24 @@ public class VisorCitasController {
     }
 
     private List<Appoint> getPatientAppoints(String dni){
-        List<Appoint> appointList = new ArrayList<>();
+        List<Appoint> appointList;
 
         Patient patient = getPatient(dni);
 
         MongoCollection<Document> appoints = MongoDB.getDatabase().getCollection("cita");
         List<Document> docAppoints = mongoDB.find(appoints, Document.parse("{'idPaciente':'" + patient.id + "'}"));
 
-        File appointsTempFile = new File("src/main/resources/json/appointsTemp.json");
-        try {
-            FileWriter appointWriter = new FileWriter(appointsTempFile);
+        StringBuilder json = new StringBuilder();
 
-            appointWriter.write("[");
+        json.append("[");
+        for (int i = 0; i < docAppoints.size(); i++) {
+            json.append(docAppoints.get(i).toJson()).append(i < docAppoints.size() - 1 ? "," : "");
+        }
+        json.append("]");
 
-            for (int i = 0; i < docAppoints.size(); i++) {
-                appointWriter.write(docAppoints.get(i).toJson() + (i < docAppoints.size()-1 ? "," : ""));
-            }
-
-            appointWriter.write("]");
-
-            appointWriter.close();
-        }catch (Exception _){}
 
         try {
-            appointList = JSON_MAPPER.readValue(appointsTempFile, JSON_MAPPER.getTypeFactory().constructCollectionType(ArrayList.class, Appoint.class));
+            appointList = JSON_MAPPER.readValue(json.toString(), JSON_MAPPER.getTypeFactory().constructCollectionType(ArrayList.class, Appoint.class));
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
