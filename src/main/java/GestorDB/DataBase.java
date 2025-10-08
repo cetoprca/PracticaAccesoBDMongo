@@ -1,14 +1,12 @@
 package GestorDB;
 
-public interface DataBase<T, R> {
+public interface DataBase<T, R, J> {
 
-    boolean insertOne(R data);
+    boolean insertOne(J location, R data);
 
-    boolean insertMany(R data);
+    boolean insertMany(J location, T data);
 
-    boolean removeOne(R data);
+    boolean remove(J location, R data);
 
-    boolean removeMany(R data);
-
-    T find(R query);
+    T find(J location, R query);
 }

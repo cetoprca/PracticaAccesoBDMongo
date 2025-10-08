@@ -1,0 +1,7 @@
+[
+  {"id" : "1" ,"nombre" :  "César Tomás Prieto Calvo", "direccion" :  "C/Paseo de Zorrilla 1", "telefono" :  "654 31 45 78", "dni" :  "12345678A"},
+
+  {"id" : "2" ,"nombre" :  "Diego Velasco Ayuso", "direccion" :  "C/Torquemada 7", "telefono" :  "601 42 65 87", "dni" :  "12345678B"},
+
+  {"id" : "3" ,"nombre" :  "David Lopez Tomuta", "direccion" :  "C/Toreros 1", "telefono" :  "692 05 23 76", "dni" :  "12345678C"}
+]

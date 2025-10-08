@@ -1,0 +1,6 @@
+[
+  {"numCita" :  "1", "idPaciente" :  "1", "idEspecialidad" :  "1", "fecha" :  "2025-09-02"},
+  {"numCita" :  "4", "idPaciente" :  "1", "idEspecialidad" :  "2", "fecha" :  "2025-09-03"},
+  {"numCita" :  "2", "idPaciente" :  "3", "idEspecialidad" :  "5", "fecha" :  "2025-10-08"},
+  {"numCita" :  "3", "idPaciente" :  "2", "idEspecialidad" :  "3", "fecha" :  "2025-01-22"}
+]

@@ -1,17 +1,28 @@
 package GestorDB;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Projections;
 import org.bson.Document;
+import org.bson.json.JsonObject;
+import org.bson.json.JsonReader;
+import org.bson.json.JsonWriter;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
-public class MongoDB implements DataBase<Document, Document>{
+public class MongoDB implements DataBase<List<Document>, Document, MongoCollection<Document>>{
 
     private static MongoDB instance;
     private final MongoClient client;
+    private static MongoDatabase database;
 
     private MongoDB(){
         Properties properties = new Properties();
@@ -28,7 +39,8 @@ public class MongoDB implements DataBase<Document, Document>{
         String pwd = properties.getProperty("mongo.pwd");
         String db = properties.getProperty("mongo.db");
 
-        client = new MongoClient("mongodb://" + user + ":" + pwd + "@" + host + ":" + port + "/" + db + "?authSource=admin");
+        client = new MongoClient(new MongoClientURI("mongodb://" + user + ":" + pwd + "@" + host + ":" + port + "/?authSource=admin"));
+        database = client.getDatabase(db);
     }
 
     public MongoClient getClient() {
@@ -43,28 +55,50 @@ public class MongoDB implements DataBase<Document, Document>{
         return getInstance();
     }
 
-    @Override
-    public boolean insertOne(Document data) {
-        return false;
+    public static MongoDatabase getDatabase(){
+        return database;
     }
 
     @Override
-    public boolean insertMany(Document data) {
-        return false;
+    public boolean insertOne(MongoCollection<Document> collection, Document data) {
+        try {
+            collection.insertOne(data);
+            return true;
+        }catch (Exception _){
+            return false;
+        }
     }
 
     @Override
-    public boolean removeOne(Document data) {
-        return false;
+    public boolean insertMany(MongoCollection<Document> collection, List<Document> data) {
+        try {
+            collection.insertMany(data);
+            return true;
+        }catch (Exception _){
+            return false;
+        }
     }
 
     @Override
-    public boolean removeMany(Document data) {
-        return false;
+    public boolean remove(MongoCollection<Document> collection, Document data) {
+        try {
+            collection.deleteMany(data);
+            return true;
+        }catch (Exception _){
+            return false;
+        }
     }
 
     @Override
-    public Document find(Document query) {
-        return null;
+    public List<Document> find(MongoCollection<Document> collection, Document query) {
+        FindIterable<Document> queryResult = collection.find(query).projection(Projections.exclude("_id"));
+
+        List<Document> documents = new ArrayList<>();
+
+        for (Document doc : queryResult){
+            documents.add(doc);
+        }
+
+        return documents;
     }
 }
