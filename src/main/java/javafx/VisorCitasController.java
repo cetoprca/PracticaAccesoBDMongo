@@ -19,6 +19,7 @@ import org.bson.Document;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,7 +50,7 @@ public class VisorCitasController {
     @FXML
     TableColumn<Appoint, String> appointNumTc;
     @FXML
-    TableColumn<Appoint, Date> dateTc;
+    TableColumn<Appoint, String> dateTc;
     @FXML
     TableColumn<Appoint, String> specialtyTc;
 
@@ -99,7 +100,8 @@ public class VisorCitasController {
 
             return new SimpleStringProperty("Especialidad no encontrada");
         });
-        dateTc.setCellValueFactory(data -> data.getValue().fecha);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        dateTc.setCellValueFactory(data -> new SimpleStringProperty(dateFormat.format(data.getValue().fecha.get())));
 
     }
     @FXML
@@ -148,7 +150,7 @@ public class VisorCitasController {
         if (patient != null && specialty != null && datePicker.getValue() != null){
             MongoCollection<Document> collection = MongoDB.getDatabase().getCollection("cita");
             System.out.println(datePicker.getValue());
-            mongoDB.insertOne(collection, Document.parse("{'num' : '" + appointNum + "', 'pacienteDNI' : '" + dni + "', 'especialidadID' : '" + specialty.id.get() + "', 'fecha' : '" + datePicker.getValue() + "'}"));
+            mongoDB.insertOne(collection, Document.parse("{'numCita' : '" + appointNum + "', 'idPaciente' : '" + patient.id + "', 'idEspecialidad' : '" + specialty.id.get() + "', 'fecha' : '" + datePicker.getValue() + "'}"));
         }
     }
 
