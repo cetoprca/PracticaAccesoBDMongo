@@ -1,12 +1,18 @@
-package javafx;
+package app.javafx;
 
-import GestorDB.MongoDB;
+import app.GestorDB.MongoDB;
+import app.Launcher;
+import app.objects.Patient;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.bson.Document;
 
@@ -41,10 +47,12 @@ public class MainMenuController {
         boolean correct;
 
         MongoDB mongoDB = MongoDB.getInstance();
-        MongoCollection<Document> usuarios = MongoDB.getDatabase().getCollection("usuario");
-        System.out.println("{'user':'" + email + "', 'password':'" + password + "'}");
-        List<Document> users = mongoDB.find(usuarios, Document.parse("{'user':'" + email + "', 'password':'" + password + "'}"));
-        System.out.println(users);
+        MongoCollection<Document> usuarios = MongoDB.getDatabase().getCollection("paciente");
+        List<Document> users = mongoDB.find(usuarios, Document.parse("{'email':'" + email + "', 'password':'" + password + "'}"));
+        String json = mongoDB.find(usuarios, Document.parse("{'email':'" + email + "', 'password':'" + password + "'}")).getFirst().toJson();
+
+        ObjectMapper JSON_MAPPER = new ObjectMapper();
+
         correct = !users.isEmpty();
 
         if (correct){
@@ -52,6 +60,12 @@ public class MainMenuController {
             stage.close();
 
             VisorCitasApp visorCitasApp = new VisorCitasApp();
+
+            try {
+                Launcher.usuarioLoggeado = JSON_MAPPER.readValue(json, JSON_MAPPER.constructType(Patient.class));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
             try {
                 visorCitasApp.start(new Stage());
             } catch (Exception e) {
@@ -73,6 +87,13 @@ public class MainMenuController {
             passwordPf.setVisible(true);
             passwordTf.setManaged(false);
             passwordTf.setVisible(false);
+        }
+    }
+
+    @FXML
+    private void checkKey(KeyEvent event){
+        if (event.getCode().equals(KeyCode.ENTER) || event.getCode().equals(KeyCode.TAB)){
+            logIn();
         }
     }
 }

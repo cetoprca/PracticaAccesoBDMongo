@@ -1,4 +1,4 @@
-package GestorDB;
+package app.GestorDB;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -84,6 +84,17 @@ public class MongoDB implements DataBase<List<Document>, Document, MongoCollecti
         }catch (Exception _){
             return false;
         }
+    }
+
+    @Override
+    public boolean modify(MongoCollection<Document> location, Document query, Document data) {
+        try {
+            remove(location, query);
+            insertOne(location, data);
+        }catch (Exception _){
+            return false;
+        }
+        return true;
     }
 
     @Override

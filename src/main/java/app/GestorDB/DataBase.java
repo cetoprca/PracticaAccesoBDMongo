@@ -1,4 +1,4 @@
-package GestorDB;
+package app.GestorDB;
 
 public interface DataBase<T, R, J> {
 
@@ -7,6 +7,8 @@ public interface DataBase<T, R, J> {
     boolean insertMany(J location, T data);
 
     boolean remove(J location, R data);
+
+    boolean modify(J location, R query, R data);
 
     T find(J location, R query);
 }

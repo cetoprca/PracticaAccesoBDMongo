@@ -1,10 +1,13 @@
-import GestorDB.MongoDB;
+package app;
+
+import app.GestorDB.MongoDB;
+import app.javafx.MainMenuApp;
+import app.javafx.VisorCitasApp;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
-import javafx.MainMenuApp;
-import javafx.VisorCitasApp;
+import app.objects.Patient;
 import org.bson.Document;
 
 import java.io.File;
@@ -16,13 +19,15 @@ import java.util.stream.Collectors;
 
 public class Launcher {
 
+    public static Patient usuarioLoggeado = null;
+
     public static void main(String[] args) {
         //Desactivar logs de mongoDB para evitar que se llene la consola
         Logger.getLogger("org.mongodb.driver").setLevel(Level.OFF);
 
         initDB();
 
-        VisorCitasApp.launchApp();
+        MainMenuApp.launchApp();
     }
 
     public static void initDB(){
@@ -64,20 +69,6 @@ public class Launcher {
 
             mongoDB.insertMany(collection, documents);
 
-            collection = MongoDB.getDatabase().getCollection("usuario");
-
-            // 1️⃣ Leer JSON a lista de Map
-            listMap = mapper.readValue(
-                    new File("src/main/resources/json/initUsuarios.json"),
-                    new TypeReference<List<Map<String,Object>>>() {}
-            );
-
-            // 2️⃣ Convertir cada Map a Document
-            documents = listMap.stream()
-                    .map(Document::new)
-                    .collect(Collectors.toList());
-
-            mongoDB.insertMany(collection, documents);
 
         }catch (Exception _){}
     }

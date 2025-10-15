@@ -1,9 +1,10 @@
-package objects;
+package app.objects;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Appoint {

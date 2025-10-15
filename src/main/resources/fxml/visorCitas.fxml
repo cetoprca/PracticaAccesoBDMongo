@@ -13,7 +13,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="850.0" prefWidth="592.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javafx.VisorCitasController">
+<AnchorPane prefHeight="850.0" prefWidth="592.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.javafx.VisorCitasController">
    <children>
       <AnchorPane layoutX="11.0" layoutY="14.0" prefHeight="74.0" prefWidth="570.0">
          <children>
@@ -92,10 +92,9 @@
       </AnchorPane>
       <AnchorPane layoutX="40.0" layoutY="731.0" prefHeight="92.0" prefWidth="511.0">
          <children>
-            <ButtonBar layoutX="36.0" layoutY="24.0" prefHeight="44.0" prefWidth="446.0">
+            <ButtonBar layoutX="78.0" layoutY="24.0" prefHeight="44.0" prefWidth="356.0">
               <buttons>
                   <Button fx:id="newAppointBt" mnemonicParsing="false" onAction="#newAppoint" prefHeight="25.0" prefWidth="99.0" text="Nueva Cita" />
-                  <Button fx:id="uploadAppointBt" mnemonicParsing="false" onAction="#uploadAppoint" prefHeight="25.0" prefWidth="91.0" text="Subir Cita" />
                   <Button fx:id="modifyAppointBt" mnemonicParsing="false" onAction="#modifyAppoint" text="Modificar Cita" />
                 <Button fx:id="deleteAppointBt" mnemonicParsing="false" onAction="#deleteAppoint" text="Borrar Cita" />
               </buttons>

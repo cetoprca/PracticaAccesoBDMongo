@@ -8,12 +8,12 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="218.0" prefWidth="408.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javafx.MainMenuController">
+<AnchorPane prefHeight="218.0" prefWidth="408.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.javafx.MainMenuController">
    <children>
       <Label layoutX="88.0" layoutY="79.0" text="Email" />
       <Label layoutX="78.0" layoutY="125.0" text="Password" />
       <TextField fx:id="emailTf" layoutX="147.0" layoutY="75.0" />
-      <PasswordField fx:id="passwordPf" layoutX="147.0" layoutY="121.0" />
+      <PasswordField fx:id="passwordPf" layoutX="147.0" layoutY="121.0" onKeyPressed="#checkKey" />
       <RadioButton fx:id="showPasswordRbut" layoutX="302.0" layoutY="125.0" mnemonicParsing="false" onAction="#showPassword" />
       <Label layoutX="77.0" layoutY="10.0" text="INICIAR SESION">
          <font>
@@ -21,6 +21,6 @@
          </font>
       </Label>
       <Button fx:id="logInButt" layoutX="178.0" layoutY="176.0" mnemonicParsing="false" onAction="#logIn" text="Entrar" />
-      <TextField fx:id="passwordTf" layoutX="147.0" layoutY="121.0" />
+      <TextField fx:id="passwordTf" layoutX="147.0" layoutY="121.0" onKeyPressed="#checkKey" />
    </children>
 </AnchorPane>
