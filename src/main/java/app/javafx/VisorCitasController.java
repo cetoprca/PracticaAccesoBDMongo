@@ -110,10 +110,12 @@ public class VisorCitasController {
     }
     @FXML
     private void modifyAppoint(){
+        int numCita = patientAppointsTv.getFocusModel().getFocusedItem().numCita.get();
 
-        deleteAppoint();
-        newAppoint();
+        deleteAppoint(numCita);
+        newAppoint(numCita);
 
+        seePatientAppoints();
     }
     @FXML
     private void newAppoint(){
@@ -128,28 +130,15 @@ public class VisorCitasController {
             }
         }
 
-        String json = mongoDB.find(MongoDB.getDatabase().getCollection("paciente"), Document.parse("{'dni':'" + dniTf.getText() + "'}")).getFirst().toJson();
+        newAppoint(numCita);
 
-        Patient patient;
-        try {
-            patient = JSON_MAPPER.readValue(json, JSON_MAPPER.constructType(Patient.class));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-        int idEspecialidad = specialtyNameToID.get(specialtyCb.getValue());
-        LocalDate fecha = datePicker.getValue();
-
-        mongoDB.insertOne(MongoDB.getDatabase().getCollection("cita"), Document.parse("{'numCita':'" + numCita + "','idPaciente':'" + patient.id + "','idEspecialidad':'" + idEspecialidad + "','fecha':'" + fecha + "'}"));
-
+        seePatientAppoints();
     }
     @FXML
     private void deleteAppoint(){
         int numCita = patientAppointsTv.getFocusModel().getFocusedItem().numCita.get();
 
-        MongoCollection<Document> collection = MongoDB.getDatabase().getCollection("cita");
-
-        mongoDB.remove(collection, Document.parse("{'numCita':'" + numCita + "'}"));
+        deleteAppoint(numCita);
 
         updateAppointList();
     }
@@ -158,6 +147,26 @@ public class VisorCitasController {
         if (event.getCode().equals(KeyCode.ENTER) || event.getCode().equals(KeyCode.TAB)){
             loadUserData(dniTf.getText());
         }
+    }
+
+    @FXML
+    private void tableViewClicked(){
+        MongoDB mongodb = MongoDB.getInstance();
+        MongoCollection<Document> collection = MongoDB.getDatabase().getCollection("cita");
+
+        int numCita = patientAppointsTv.getFocusModel().getFocusedItem().numCita.get();
+
+        String json = mongodb.find(collection, Document.parse("{'numCita' : '" + numCita + "'}")).getFirst().toJson();
+        Appoint selectedAppoint;
+        try {
+            selectedAppoint = JSON_MAPPER.readValue(json, Appoint.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        appointNumTf.setText("" + selectedAppoint.numCita.get());
+        specialtyCb.getSelectionModel().select(specialtyIdToName.get(selectedAppoint.idEspecialidad.get()));
+        datePicker.setValue(selectedAppoint.fecha.get().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
     }
 
     private void loadUserData(String dni){
@@ -235,5 +244,28 @@ public class VisorCitasController {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    private void deleteAppoint(int numCita){
+        MongoCollection<Document> collection = MongoDB.getDatabase().getCollection("cita");
+
+        mongoDB.remove(collection, Document.parse("{'numCita':'" + numCita + "'}"));
+    }
+
+    private void newAppoint(int numCita){
+        String json = mongoDB.find(MongoDB.getDatabase().getCollection("paciente"), Document.parse("{'dni':'" + dniTf.getText() + "'}")).getFirst().toJson();
+
+        Patient patient;
+        try {
+            patient = JSON_MAPPER.readValue(json, JSON_MAPPER.constructType(Patient.class));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        int idEspecialidad = specialtyNameToID.get(specialtyCb.getValue());
+        LocalDate fecha = datePicker.getValue();
+
+        mongoDB.insertOne(MongoDB.getDatabase().getCollection("cita"), Document.parse("{'numCita':'" + numCita + "','idPaciente':'" + patient.id + "','idEspecialidad':'" + idEspecialidad + "','fecha':'" + fecha + "'}"));
+
     }
 }

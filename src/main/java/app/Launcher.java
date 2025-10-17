@@ -2,20 +2,19 @@ package app;
 
 import app.GestorDB.MongoDB;
 import app.javafx.MainMenuApp;
-import app.javafx.VisorCitasApp;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import app.objects.Patient;
 import org.bson.Document;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class Launcher {
 
@@ -25,52 +24,53 @@ public class Launcher {
         //Desactivar logs de mongoDB para evitar que se llene la consola
         Logger.getLogger("org.mongodb.driver").setLevel(Level.OFF);
 
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("¿Quiere inicializar la base de datos a los valores de prueba por defecto? S/n");
+        if (scanner.nextLine().equalsIgnoreCase("s")){
+            initDB();
+        }
+
         initDB();
 
         MainMenuApp.launchApp();
     }
 
     public static void initDB(){
+
+        dropDatabae("practica");
+
+        MongoCollection<Document> patients = MongoDB.getDatabase().getCollection("paciente");
+        MongoCollection<Document> appoints = MongoDB.getDatabase().getCollection("cita");
+
+        initFile(patients, "initPacientes");
+        initFile(appoints, "initCitas");
+
+    }
+
+    private static void dropDatabae(String databaseName){
+        MongoDB mongoDB = MongoDB.getInstance();
+        MongoClient client = mongoDB.getClient();
+        client.dropDatabase(databaseName);
+    }
+
+    private static void initFile(MongoCollection<Document> collection, String filename){
+        MongoDB mongoDB = MongoDB.getInstance();
+
+        List<String> lineas;
         try {
-            MongoDB mongoDB = MongoDB.getInstance();
-            ObjectMapper mapper = new ObjectMapper();
+            lineas = Files.readAllLines(Path.of("src/main/resources/json/" + filename + ".txt"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-            MongoClient client = mongoDB.getClient();
+        List<Document> instructions = new ArrayList<>();
 
-            client.dropDatabase("practica");
+        for (String linea : lineas){
+            instructions.add(Document.parse(linea));
+        }
 
-            MongoCollection<Document> collection = MongoDB.getDatabase().getCollection("paciente");
-
-            // 1️⃣ Leer JSON a lista de Map
-            List<Map<String, Object>> listMap = mapper.readValue(
-                    new File("src/main/resources/json/initPacientes.json"),
-                    new TypeReference<List<Map<String,Object>>>() {}
-            );
-
-            // 2️⃣ Convertir cada Map a Document
-            List<Document> documents = listMap.stream()
-                    .map(Document::new)
-                    .collect(Collectors.toList());
-
-            mongoDB.insertMany(collection, documents);
-
-            collection = MongoDB.getDatabase().getCollection("cita");
-
-            // 1️⃣ Leer JSON a lista de Map
-            listMap = mapper.readValue(
-                    new File("src/main/resources/json/initCitas.json"),
-                    new TypeReference<List<Map<String,Object>>>() {}
-            );
-
-            // 2️⃣ Convertir cada Map a Document
-            documents = listMap.stream()
-                    .map(Document::new)
-                    .collect(Collectors.toList());
-
-            mongoDB.insertMany(collection, documents);
-
-
-        }catch (Exception _){}
+        mongoDB.insertMany(collection, instructions);
     }
 
 }

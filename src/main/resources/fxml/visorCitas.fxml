@@ -78,7 +78,7 @@
       <AnchorPane layoutX="98.0" layoutY="456.0" prefHeight="200.0" prefWidth="393.0">
          <children>
             <Label layoutX="149.0" layoutY="6.0" text="Citas del Paciente:" />
-            <TableView fx:id="patientAppointsTv" layoutY="23.0" prefHeight="200.0" prefWidth="397.0">
+            <TableView fx:id="patientAppointsTv" layoutY="23.0" onMouseClicked="#tableViewClicked" prefHeight="200.0" prefWidth="397.0">
               <columns>
                 <TableColumn fx:id="appointNumTc" prefWidth="75.0" text="Nº Cita" />
                 <TableColumn fx:id="dateTc" prefWidth="75.0" text="Fecha" />

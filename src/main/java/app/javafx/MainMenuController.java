@@ -7,10 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
@@ -42,35 +39,42 @@ public class MainMenuController {
 
     @FXML
     private void logIn(){
-        String email = emailTf.getText();
-        String password = passwordPf.getText();
-        boolean correct;
+        try {
+            String email = emailTf.getText();
+            String password = passwordPf.getText();
+            boolean correct;
 
-        MongoDB mongoDB = MongoDB.getInstance();
-        MongoCollection<Document> usuarios = MongoDB.getDatabase().getCollection("paciente");
-        List<Document> users = mongoDB.find(usuarios, Document.parse("{'email':'" + email + "', 'password':'" + password + "'}"));
-        String json = mongoDB.find(usuarios, Document.parse("{'email':'" + email + "', 'password':'" + password + "'}")).getFirst().toJson();
+            MongoDB mongoDB = MongoDB.getInstance();
+            MongoCollection<Document> usuarios = MongoDB.getDatabase().getCollection("paciente");
+            List<Document> users = mongoDB.find(usuarios, Document.parse("{'email':'" + email + "', 'password':'" + password + "'}"));
+            String json = mongoDB.find(usuarios, Document.parse("{'email':'" + email + "', 'password':'" + password + "'}")).getFirst().toJson();
 
-        ObjectMapper JSON_MAPPER = new ObjectMapper();
+            ObjectMapper JSON_MAPPER = new ObjectMapper();
 
-        correct = !users.isEmpty();
+            correct = !users.isEmpty();
 
-        if (correct){
-            Stage stage = ((Stage) passwordPf.getScene().getWindow());
-            stage.close();
+            if (correct){
+                Stage stage = ((Stage) passwordPf.getScene().getWindow());
+                stage.close();
 
-            VisorCitasApp visorCitasApp = new VisorCitasApp();
+                VisorCitasApp visorCitasApp = new VisorCitasApp();
 
-            try {
-                Launcher.usuarioLoggeado = JSON_MAPPER.readValue(json, JSON_MAPPER.constructType(Patient.class));
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                try {
+                    Launcher.usuarioLoggeado = JSON_MAPPER.readValue(json, JSON_MAPPER.constructType(Patient.class));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    visorCitasApp.start(new Stage());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
-            try {
-                visorCitasApp.start(new Stage());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        }catch (Exception e){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Something went wrong");
+            alert.setContentText(e.getMessage());
+            alert.show();
         }
     }
 

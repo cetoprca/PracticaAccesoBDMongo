@@ -17,8 +17,4 @@ public class VisorCitasApp extends Application {
         stage.setScene(scene);
         stage.show();
     }
-
-    public static void launchApp(){
-        launch();
-    }
 }
